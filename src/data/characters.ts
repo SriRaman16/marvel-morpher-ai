@@ -19,6 +19,7 @@ export const characters: Character[] = [
     image: hulkImage,
     description: "The incredible Hulk possesses superhuman strength that increases with his rage. Bruce Banner transforms into this green giant when angered, making him one of the most powerful beings in the universe.",
     voiceId: "9BWtsMINqrJLrRacOk9x", // Aria
+    gender: "male",
   },
   {
     id: "ironman",
@@ -26,6 +27,7 @@ export const characters: Character[] = [
     image: ironmanImage,
     description: "Genius billionaire Tony Stark uses his powered armor suit equipped with cutting-edge technology, repulsor beams, and flight capabilities to protect the world as Iron Man.",
     voiceId: "IKne3meq5aSn9XLyUdCD", // Charlie
+    gender: "male",
   },
   {
     id: "captain-america",
@@ -33,6 +35,7 @@ export const characters: Character[] = [
     image: captainAmericaImage,
     description: "Steve Rogers, enhanced by the Super Soldier Serum, embodies peak human potential. Armed with his iconic vibranium shield, he leads with courage, honor, and unwavering dedication to justice.",
     voiceId: "bIHbv24MWmeRgasZH58o", // Will
+    gender: "male",
   },
   {
     id: "spiderman",
@@ -40,6 +43,7 @@ export const characters: Character[] = [
     image: spidermanImage,
     description: "Peter Parker gained spider-like abilities after being bitten by a radioactive spider. With wall-crawling powers, spider-sense, and web-slinging abilities, he protects New York City.",
     voiceId: "N2lVS1w4EtoT3dr4eOWO", // Callum
+    gender: "male",
   },
   {
     id: "thanos",
@@ -47,6 +51,7 @@ export const characters: Character[] = [
     image: thanosImage,
     description: "The Mad Titan Thanos seeks ultimate power through the Infinity Stones. With incredible strength and a twisted sense of balance, he's one of the universe's most formidable threats.",
     voiceId: "onwK4e9ZLuTAKqWW03F9", // Daniel
+    gender: "male",
   },
   {
     id: "doctor-strange",
@@ -54,6 +59,7 @@ export const characters: Character[] = [
     image: doctorStrangeImage,
     description: "Master of the mystic arts, Stephen Strange wields powerful magic and can manipulate time and dimensions. As the Sorcerer Supreme, he protects Earth from mystical threats.",
     voiceId: "JBFqnCBsd6RMkjVDRZzb", // George
+    gender: "male",
   },
   {
     id: "she-hulk",
@@ -61,6 +67,7 @@ export const characters: Character[] = [
     image: sheHulkImage,
     description: "Jennifer Walters gained Hulk-like powers through a blood transfusion from her cousin Bruce Banner. Unlike Hulk, she retains her intelligence and personality while transformed.",
     voiceId: "EXAVITQu4vr4xnSDxMaL", // Sarah
+    gender: "female",
   },
   {
     id: "vision",
@@ -68,6 +75,7 @@ export const characters: Character[] = [
     image: visionImage,
     description: "An android powered by the Mind Stone, Vision possesses superhuman strength, flight, energy projection, and density manipulation. He embodies both logic and humanity.",
     voiceId: "TX3LPaxmHKxFdv7VOQHJ", // Liam
+    gender: "male",
   },
   {
     id: "captain-marvel",
@@ -75,6 +83,7 @@ export const characters: Character[] = [
     image: captainMarvelImage,
     description: "Carol Danvers possesses incredible cosmic powers including energy projection, flight, and superhuman strength. She's one of the universe's most powerful heroes.",
     voiceId: "XB0fDUnXU5powFXDhCwa", // Charlotte
+    gender: "female",
   },
   {
     id: "wolverine",
@@ -82,6 +91,7 @@ export const characters: Character[] = [
     image: wolverineImage,
     description: "Logan's mutant healing factor and adamantium claws make him nearly indestructible. With enhanced senses and combat skills, he's the best there is at what he does.",
     voiceId: "cjVigY5qzO86Huf0OWal", // Eric
+    gender: "male",
   },
   {
     id: "gamora",
@@ -89,6 +99,7 @@ export const characters: Character[] = [
     image: gamoraImage,
     description: "The deadliest woman in the galaxy, Gamora is a master assassin with superhuman abilities. Trained by Thanos, she now fights for good as a Guardian of the Galaxy.",
     voiceId: "cgSgspJ2msm6clMCkdW9", // Jessica
+    gender: "female",
   },
   {
     id: "nick-fury",
@@ -96,6 +107,7 @@ export const characters: Character[] = [
     image: nickFuryImage,
     description: "Director of S.H.I.E.L.D., Nick Fury is a master strategist and spy. With his tactical genius and vast resources, he assembles and guides Earth's mightiest heroes.",
     voiceId: "pqHfZKP75CvOlQylNhV4", // Bill
+    gender: "male",
   },
 ];
 

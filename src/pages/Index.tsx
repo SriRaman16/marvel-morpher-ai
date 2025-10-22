@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Zap, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { ElevenLabsService } from "@/utils/elevenLabsService";
-import { loadFaceRecognitionModels, matchFaceToReferences, extractFaceDescriptor } from "@/utils/faceRecognition";
+import { loadFaceRecognitionModels, matchFaceToReferences, extractFaceDescriptor, detectGender } from "@/utils/faceRecognition";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const Index = () => {
@@ -72,8 +72,13 @@ const Index = () => {
     }
   };
 
-  const getRandomCharacter = (): Character => {
-    return characters[Math.floor(Math.random() * characters.length)];
+  const getRandomCharacter = (gender: 'male' | 'female'): Character => {
+    const filteredCharacters = characters.filter(c => c.gender === gender);
+    if (filteredCharacters.length === 0) {
+      // Fallback to any character if no matching gender found
+      return characters[Math.floor(Math.random() * characters.length)];
+    }
+    return filteredCharacters[Math.floor(Math.random() * filteredCharacters.length)];
   };
 
   const getChiefGuestCharacter = (guestName: string): Character | null => {
@@ -87,6 +92,25 @@ const Index = () => {
   const handleCapture = async (imageData: string) => {
     setCapturedFace(imageData);
     setRecognizedGuest(null);
+
+    // Create image element for gender detection
+    const img = document.createElement('img');
+    await new Promise((resolve, reject) => {
+      img.onload = resolve;
+      img.onerror = reject;
+      img.src = imageData;
+    });
+
+    // Detect gender
+    let detectedGender: 'male' | 'female' = 'male';
+    if (modelsLoaded) {
+      try {
+        detectedGender = await detectGender(img);
+        console.log('Detected gender:', detectedGender);
+      } catch (error) {
+        console.error("Gender detection error:", error);
+      }
+    }
 
     // Try to match face if models are loaded and we have descriptors
     if (modelsLoaded && faceDescriptors.size > 0) {
@@ -110,8 +134,8 @@ const Index = () => {
       }
     }
 
-    // Random character for non-chief guests
-    const character = getRandomCharacter();
+    // Random character for non-chief guests, filtered by gender
+    const character = getRandomCharacter(detectedGender);
     setSelectedCharacter(character);
     toast.success(`You've been transformed into ${character.name}!`);
   };

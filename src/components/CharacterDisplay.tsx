@@ -27,74 +27,90 @@ const CharacterDisplay = ({
   }, [character, faceImage]);
 
   const compositeImages = async () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    canvas.width = 800;
-    canvas.height = 800;
-
-    // Load character body
-    const characterImg = new Image();
-    characterImg.crossOrigin = "anonymous";
+    if (!character || !faceImage) return;
     
-    await new Promise((resolve, reject) => {
-      characterImg.onload = resolve;
-      characterImg.onerror = reject;
-      characterImg.src = character.image;
-    });
+    const { detectFaceLandmarks } = await import('@/utils/faceRecognition');
+    const { extractAndPositionFace } = await import('@/utils/faceMorphing');
 
-    // Draw character body
-    ctx.drawImage(characterImg, 0, 0, canvas.width, canvas.height);
+    try {
+      const bodyImg = new Image();
+      bodyImg.crossOrigin = "anonymous";
+      
+      const faceImg = new Image();
+      faceImg.crossOrigin = "anonymous";
 
-    // Load and draw face
-    const faceImg = new Image();
-    await new Promise((resolve, reject) => {
-      faceImg.onload = resolve;
-      faceImg.onerror = reject;
-      faceImg.src = faceImage;
-    });
+      await Promise.all([
+        new Promise((resolve, reject) => {
+          bodyImg.onload = resolve;
+          bodyImg.onerror = reject;
+          bodyImg.src = character.image;
+        }),
+        new Promise((resolve, reject) => {
+          faceImg.onload = resolve;
+          faceImg.onerror = reject;
+          faceImg.src = faceImage;
+        }),
+      ]);
 
-    // Calculate face position (center top area)
-    const faceWidth = canvas.width * 0.25;
-    const faceHeight = faceWidth * (faceImg.height / faceImg.width);
-    const faceX = canvas.width / 2 - faceWidth / 2;
-    const faceY = canvas.height * 0.12;
+      // Detect face landmarks from user's face
+      const landmarks = await detectFaceLandmarks(faceImg);
+      
+      if (!landmarks) {
+        console.warn('No face landmarks detected, using simple overlay');
+        // Fallback to simple overlay if no landmarks detected
+        const canvas = canvasRef.current!;
+        canvas.width = bodyImg.width;
+        canvas.height = bodyImg.height;
+        const ctx = canvas.getContext("2d")!;
 
-    // Draw face with circular mask
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(
-      faceX + faceWidth / 2,
-      faceY + faceHeight / 2,
-      faceWidth / 2,
-      0,
-      Math.PI * 2
-    );
-    ctx.closePath();
-    ctx.clip();
-    ctx.drawImage(faceImg, faceX, faceY, faceWidth, faceHeight);
-    ctx.restore();
+        ctx.drawImage(bodyImg, 0, 0);
 
-    // Add glow effect around face
-    ctx.shadowColor = "rgba(226, 54, 54, 0.6)";
-    ctx.shadowBlur = 20;
-    ctx.strokeStyle = "rgba(226, 54, 54, 0.8)";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(
-      faceX + faceWidth / 2,
-      faceY + faceHeight / 2,
-      faceWidth / 2 + 2,
-      0,
-      Math.PI * 2
-    );
-    ctx.stroke();
+        const faceWidth = bodyImg.width * 0.35;
+        const faceHeight = faceWidth;
+        const faceX = bodyImg.width * 0.32;
+        const faceY = bodyImg.height * 0.08;
 
-    const finalImage = canvas.toDataURL("image/png");
-    setCompositeImage(finalImage);
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(faceX + faceWidth / 2, faceY + faceHeight / 2, faceWidth / 2, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(faceImg, faceX, faceY, faceWidth, faceHeight);
+        ctx.restore();
+
+        const dataUrl = canvas.toDataURL("image/png");
+        setCompositeImage(dataUrl);
+        return;
+      }
+
+      // Define character face region (adjust based on character body structure)
+      const characterFaceRegion = {
+        x: bodyImg.width * 0.32,
+        y: bodyImg.height * 0.08,
+        width: bodyImg.width * 0.35,
+        height: bodyImg.width * 0.35
+      };
+
+      // Use face morphing with landmark mapping
+      const resultCanvas = extractAndPositionFace(
+        faceImg,
+        bodyImg,
+        landmarks,
+        characterFaceRegion
+      );
+
+      // Update canvas reference and composite image
+      const canvas = canvasRef.current!;
+      canvas.width = resultCanvas.width;
+      canvas.height = resultCanvas.height;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(resultCanvas, 0, 0);
+
+      const dataUrl = canvas.toDataURL("image/png");
+      setCompositeImage(dataUrl);
+    } catch (error) {
+      console.error("Error compositing images:", error);
+    }
   };
 
   const downloadImage = () => {

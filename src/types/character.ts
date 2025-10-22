@@ -4,6 +4,7 @@ export interface Character {
   image: string;
   description: string;
   voiceId?: string;
+  gender: "male" | "female";
 }
 
 export interface PredefinedFace {

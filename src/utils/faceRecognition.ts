@@ -12,6 +12,7 @@ export async function loadFaceRecognitionModels() {
       faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
       faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
       faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
+      faceapi.nets.ageGenderNet.loadFromUri(MODEL_URL),
     ]);
     modelsLoaded = true;
     console.log('Face recognition models loaded successfully');
@@ -41,6 +42,42 @@ export async function extractFaceDescriptor(imageElement: HTMLImageElement): Pro
 
 export function compareFaces(descriptor1: Float32Array, descriptor2: Float32Array): number {
   return faceapi.euclideanDistance(descriptor1, descriptor2);
+}
+
+export async function detectGender(imageElement: HTMLImageElement): Promise<'male' | 'female'> {
+  try {
+    const detection = await faceapi
+      .detectSingleFace(imageElement)
+      .withFaceLandmarks()
+      .withAgeAndGender();
+    
+    if (!detection || !detection.gender) {
+      // Default to male if detection fails
+      return 'male';
+    }
+    
+    return detection.gender as 'male' | 'female';
+  } catch (error) {
+    console.error('Error detecting gender:', error);
+    return 'male'; // Default fallback
+  }
+}
+
+export async function detectFaceLandmarks(imageElement: HTMLImageElement) {
+  try {
+    const detection = await faceapi
+      .detectSingleFace(imageElement)
+      .withFaceLandmarks();
+    
+    if (!detection) {
+      return null;
+    }
+    
+    return detection.landmarks;
+  } catch (error) {
+    console.error('Error detecting face landmarks:', error);
+    return null;
+  }
 }
 
 export async function matchFaceToReferences(
