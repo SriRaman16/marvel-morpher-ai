@@ -18,8 +18,9 @@ export class ElevenLabsService {
           text,
           model_id: "eleven_monolingual_v1",
           voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.75,
+            stability: 0.7,
+            similarity_boost: 0.8,
+            style: 0.3,
           },
         }),
       }
@@ -32,9 +33,11 @@ export class ElevenLabsService {
     return await response.arrayBuffer();
   }
 
-  async playCharacterDescription(text: string, voiceId: string): Promise<void> {
+  async playJarvisIntroduction(text: string): Promise<void> {
     try {
-      const audioData = await this.generateSpeech(text, voiceId);
+      // Use George's voice for Jarvis-style AI assistant
+      const jarvisVoiceId = "JBFqnCBsd6RMkjVDRZzb";
+      const audioData = await this.generateSpeech(text, jarvisVoiceId);
       const audioBlob = new Blob([audioData], { type: "audio/mpeg" });
       const audioUrl = URL.createObjectURL(audioBlob);
       

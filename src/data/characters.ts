@@ -99,9 +99,27 @@ export const characters: Character[] = [
   },
 ];
 
-// Predefined faces with their assigned characters (for the special voice-over feature)
-export const predefinedFaces = [
-  { name: "Tony", characterId: "ironman" },
-  { name: "Steve", characterId: "captain-america" },
-  { name: "Bruce", characterId: "hulk" },
+// Predefined chief guests with their assigned characters and reference photos
+// Users will upload their photos which will be stored for face recognition
+export const predefinedChiefGuests = [
+  { 
+    name: "Chief Guest 1", 
+    characterId: "ironman",
+    description: "The genius inventor with an arc reactor powering his suit"
+  },
+  { 
+    name: "Chief Guest 2", 
+    characterId: "captain-america",
+    description: "The super soldier with unmatched courage and leadership"
+  },
+  { 
+    name: "Chief Guest 3", 
+    characterId: "hulk",
+    description: "The incredible green giant with unlimited strength"
+  },
 ];
+
+// Jarvis-style voice-over template
+export const getJarvisIntroduction = (guestName: string, character: Character): string => {
+  return `Good evening. Welcome, ${guestName}. Facial recognition confirmed. Initiating character transformation protocol. You have been designated as ${character.name}. ${character.description} The transformation is complete. All systems operational.`;
+};
