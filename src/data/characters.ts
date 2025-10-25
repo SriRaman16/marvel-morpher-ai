@@ -1,16 +1,15 @@
 import { Character } from "@/types/character";
-import hulkImage from "@/assets/characters/hulk.png";
-import ironmanImage from "@/assets/characters/ironman.png";
-import captainAmericaImage from "@/assets/characters/captain-america.png";
-import spidermanImage from "@/assets/characters/spiderman.png";
-import thanosImage from "@/assets/characters/thanos.png";
-import doctorStrangeImage from "@/assets/characters/doctor-strange.png";
-import sheHulkImage from "@/assets/characters/she-hulk.png";
-import visionImage from "@/assets/characters/vision.png";
-import captainMarvelImage from "@/assets/characters/captain-marvel.png";
+import hulkImage from "@/assets/characters/hulk.jpg";
+import ironmanImage from "@/assets/characters/iron man.png";
+import captainAmericaImage from "@/assets/characters/captain america.jpg";
+import spidermanImage from "@/assets/characters/spiderman.jpg";
+import thanosImage from "@/assets/characters/Thanos.png";
+import doctorStrangeImage from "@/assets/characters/Dr Strange.jpg";
+import sheHulkImage from "@/assets/characters/She-hulk.jpg";
+import captainMarvelImage from "@/assets/characters/captain marvel.jpg";
 import wolverineImage from "@/assets/characters/wolverine.png";
-import gamoraImage from "@/assets/characters/gamora.png";
-import nickFuryImage from "@/assets/characters/nick-fury.png";
+import nickFuryImage from "@/assets/characters/nick fury.png";
+import wandaImage from "@/assets/characters/wanda.png";
 
 export const characters: Character[] = [
   {
@@ -70,12 +69,12 @@ export const characters: Character[] = [
     gender: "female",
   },
   {
-    id: "vision",
-    name: "Vision",
-    image: visionImage,
-    description: "An android powered by the Mind Stone, Vision possesses superhuman strength, flight, energy projection, and density manipulation. He embodies both logic and humanity.",
-    voiceId: "TX3LPaxmHKxFdv7VOQHJ", // Liam
-    gender: "male",
+    id: "wanda",
+    name: "Scarlet Witch",
+    image: wandaImage,
+    description: "Wanda Maximoff wields chaos magic and reality-warping powers. As the Scarlet Witch, she's one of the most powerful beings in the Marvel universe with telekinesis and mind manipulation abilities.",
+    voiceId: "EXAVITQu4vr4xnSDxMaL", // Sarah
+    gender: "female",
   },
   {
     id: "captain-marvel",
@@ -92,14 +91,6 @@ export const characters: Character[] = [
     description: "Logan's mutant healing factor and adamantium claws make him nearly indestructible. With enhanced senses and combat skills, he's the best there is at what he does.",
     voiceId: "cjVigY5qzO86Huf0OWal", // Eric
     gender: "male",
-  },
-  {
-    id: "gamora",
-    name: "Gamora",
-    image: gamoraImage,
-    description: "The deadliest woman in the galaxy, Gamora is a master assassin with superhuman abilities. Trained by Thanos, she now fights for good as a Guardian of the Galaxy.",
-    voiceId: "cgSgspJ2msm6clMCkdW9", // Jessica
-    gender: "female",
   },
   {
     id: "nick-fury",
