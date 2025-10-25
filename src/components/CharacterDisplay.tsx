@@ -30,7 +30,7 @@ const CharacterDisplay = ({
     if (!character || !faceImage) return;
     
     const { detectFaceLandmarks } = await import('@/utils/faceRecognition');
-    const { extractAndPositionFace } = await import('@/utils/faceMorphing');
+    const { morphFaceToCharacter } = await import('@/utils/faceMorphing');
 
     try {
       const bodyImg = new Image();
@@ -83,6 +83,13 @@ const CharacterDisplay = ({
         return;
       }
 
+      // Create canvas for user face
+      const faceCanvas = document.createElement('canvas');
+      faceCanvas.width = faceImg.width;
+      faceCanvas.height = faceImg.height;
+      const faceCtx = faceCanvas.getContext('2d')!;
+      faceCtx.drawImage(faceImg, 0, 0);
+
       // Define character face region (adjust based on character body structure)
       const characterFaceRegion = {
         x: bodyImg.width * 0.32,
@@ -91,9 +98,9 @@ const CharacterDisplay = ({
         height: bodyImg.width * 0.35
       };
 
-      // Use face morphing with landmark mapping
-      const resultCanvas = extractAndPositionFace(
-        faceImg,
+      // Use proper face morphing for realistic blending
+      const resultCanvas = await morphFaceToCharacter(
+        faceCanvas,
         bodyImg,
         landmarks,
         characterFaceRegion
