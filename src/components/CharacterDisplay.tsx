@@ -28,88 +28,57 @@ const CharacterDisplay = ({
 
   const compositeImages = async () => {
     if (!character || !faceImage) return;
-    
-    const { detectFaceLandmarks } = await import('@/utils/faceRecognition');
-    const { extractAndPositionFace } = await import('@/utils/faceMorphing');
 
     try {
-      const bodyImg = new Image();
-      bodyImg.crossOrigin = "anonymous";
+      toast.info("Transforming your image...");
       
-      const faceImg = new Image();
-      faceImg.crossOrigin = "anonymous";
+      // Convert character image to base64
+      const characterBase64 = await new Promise<string>((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d')!;
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL('image/jpeg', 0.9));
+        };
+        img.onerror = reject;
+        img.src = character.image;
+      });
 
-      await Promise.all([
-        new Promise((resolve, reject) => {
-          bodyImg.onload = resolve;
-          bodyImg.onerror = reject;
-          bodyImg.src = character.image;
-        }),
-        new Promise((resolve, reject) => {
-          faceImg.onload = resolve;
-          faceImg.onerror = reject;
-          faceImg.src = faceImage;
-        }),
-      ]);
-
-      // Detect face landmarks from user's face
-      const landmarks = await detectFaceLandmarks(faceImg);
-      
-      if (!landmarks) {
-        console.warn('No face landmarks detected, using simple overlay');
-        // Fallback to simple overlay if no landmarks detected
-        const canvas = canvasRef.current!;
-        canvas.width = bodyImg.width;
-        canvas.height = bodyImg.height;
-        const ctx = canvas.getContext("2d")!;
-
-        ctx.drawImage(bodyImg, 0, 0);
-
-        const faceWidth = bodyImg.width * 0.35;
-        const faceHeight = faceWidth;
-        const faceX = bodyImg.width * 0.32;
-        const faceY = bodyImg.height * 0.08;
-
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(faceX + faceWidth / 2, faceY + faceHeight / 2, faceWidth / 2, 0, Math.PI * 2);
-        ctx.closePath();
-        ctx.clip();
-        ctx.drawImage(faceImg, faceX, faceY, faceWidth, faceHeight);
-        ctx.restore();
-
-        const dataUrl = canvas.toDataURL("image/png");
-        setCompositeImage(dataUrl);
-        return;
-      }
-
-      // Define character face region (adjust based on character body structure)
-      const characterFaceRegion = {
-        x: bodyImg.width * 0.32,
-        y: bodyImg.height * 0.08,
-        width: bodyImg.width * 0.35,
-        height: bodyImg.width * 0.35
-      };
-
-      // Extract and overlay user's face on character
-      const resultCanvas = extractAndPositionFace(
-        faceImg,
-        bodyImg,
-        landmarks,
-        characterFaceRegion
+      // Call Fotor API via backend function
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/transform-character`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            userImage: faceImage,
+            characterImage: characterBase64,
+          }),
+        }
       );
 
-      // Update canvas reference and composite image
-      const canvas = canvasRef.current!;
-      canvas.width = resultCanvas.width;
-      canvas.height = resultCanvas.height;
-      const ctx = canvas.getContext("2d")!;
-      ctx.drawImage(resultCanvas, 0, 0);
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
 
-      const dataUrl = canvas.toDataURL("image/png");
-      setCompositeImage(dataUrl);
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.error || 'Transformation failed');
+      }
+
+      setCompositeImage(data.transformedImage);
+      toast.success("Transformation complete!");
     } catch (error) {
-      console.error("Error compositing images:", error);
+      console.error("Error transforming image:", error);
+      toast.error("Failed to transform image. Please try again.");
     }
   };
 

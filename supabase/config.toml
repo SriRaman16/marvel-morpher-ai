@@ -1,1 +1,4 @@
 project_id = "lczytefqutspzarsaviw"
+
+[functions.transform-character]
+verify_jwt = false
