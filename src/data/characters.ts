@@ -5,11 +5,8 @@ import captainAmericaImage from "@/assets/characters/captain-america.jpg";
 import spidermanImage from "@/assets/characters/spiderman.jpg";
 import thanosImage from "@/assets/characters/thanos.png";
 import doctorStrangeImage from "@/assets/characters/doctor-strange.jpg";
-import sheHulkImage from "@/assets/characters/she-hulk.jpg";
-import captainMarvelImage from "@/assets/characters/captain-marvel.jpg";
 import wolverineImage from "@/assets/characters/wolverine.png";
 import nickFuryImage from "@/assets/characters/nick-fury.png";
-import wandaImage from "@/assets/characters/wanda.png";
 
 export const characters: Character[] = [
   {
@@ -59,30 +56,6 @@ export const characters: Character[] = [
     description: "Master of the mystic arts, Stephen Strange wields powerful magic and can manipulate time and dimensions. As the Sorcerer Supreme, he protects Earth from mystical threats.",
     voiceId: "JBFqnCBsd6RMkjVDRZzb", // George
     gender: "male",
-  },
-  {
-    id: "she-hulk",
-    name: "She-Hulk",
-    image: sheHulkImage,
-    description: "Jennifer Walters gained Hulk-like powers through a blood transfusion from her cousin Bruce Banner. Unlike Hulk, she retains her intelligence and personality while transformed.",
-    voiceId: "EXAVITQu4vr4xnSDxMaL", // Sarah
-    gender: "female",
-  },
-  {
-    id: "wanda",
-    name: "Scarlet Witch",
-    image: wandaImage,
-    description: "Wanda Maximoff wields chaos magic and reality-warping powers. As the Scarlet Witch, she's one of the most powerful beings in the Marvel universe with telekinesis and mind manipulation abilities.",
-    voiceId: "EXAVITQu4vr4xnSDxMaL", // Sarah
-    gender: "female",
-  },
-  {
-    id: "captain-marvel",
-    name: "Captain Marvel",
-    image: captainMarvelImage,
-    description: "Carol Danvers possesses incredible cosmic powers including energy projection, flight, and superhuman strength. She's one of the universe's most powerful heroes.",
-    voiceId: "XB0fDUnXU5powFXDhCwa", // Charlotte
-    gender: "female",
   },
   {
     id: "wolverine",
