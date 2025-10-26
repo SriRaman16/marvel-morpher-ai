@@ -20,32 +20,98 @@ serve(async (req) => {
 
     console.log('Starting Fotor face swap transformation...');
 
-    // Call Fotor API for face swap
-    const response = await fetch('https://developer-api.fotor.com/api/v1/face_swap', {
+    // Step 1: Submit face swap task
+    const submitResponse = await fetch('https://api-b.fotor.com/v1/aiart/faceswap', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${FOTOR_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        target_image: characterImage, // Base64 string of the character body
-        swap_image: userImage,         // Base64 string of the user's face
+        userImageUrl: userImage,
+        templateImageUrl: characterImage,
       }),
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Fotor API error:', response.status, errorText);
-      throw new Error(`Fotor API error: ${response.status} - ${errorText}`);
+    if (!submitResponse.ok) {
+      const errorText = await submitResponse.text();
+      console.error('Fotor API submit error:', submitResponse.status, errorText);
+      throw new Error(`Fotor API error: ${submitResponse.status} - ${errorText}`);
     }
 
-    const data = await response.json();
-    console.log('Fotor transformation successful');
+    const submitData = await submitResponse.json();
+    console.log('Fotor task submitted:', submitData);
 
-    // Return the transformed image
+    if (submitData.code !== '000') {
+      throw new Error(`Fotor API error: ${submitData.msg}`);
+    }
+
+    const taskId = submitData.data.taskId;
+
+    // Step 2: Poll for task completion
+    let attempts = 0;
+    const maxAttempts = 30; // 30 seconds max wait time
+    let taskStatus = 0;
+    let resultUrl = '';
+
+    while (attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+
+      const statusResponse = await fetch(
+        `https://api-b.fotor.com/v1/aiart/tasks/${taskId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${FOTOR_API_KEY}`,
+          },
+        }
+      );
+
+      if (!statusResponse.ok) {
+        const errorText = await statusResponse.text();
+        console.error('Fotor task status error:', statusResponse.status, errorText);
+        throw new Error(`Failed to check task status: ${statusResponse.status}`);
+      }
+
+      const statusData = await statusResponse.json();
+      console.log(`Task status check (attempt ${attempts + 1}):`, statusData);
+
+      if (statusData.code !== '000') {
+        throw new Error(`Task status error: ${statusData.msg}`);
+      }
+
+      taskStatus = statusData.data.status;
+
+      if (taskStatus === 1) {
+        // Task completed
+        resultUrl = statusData.data.resultUrl;
+        console.log('Task completed successfully, result URL:', resultUrl);
+        break;
+      } else if (taskStatus === 2) {
+        // Task failed
+        throw new Error('Face swap task failed');
+      }
+
+      attempts++;
+    }
+
+    if (taskStatus !== 1) {
+      throw new Error('Task timed out waiting for completion');
+    }
+
+    // Step 3: Fetch the result image and convert to base64
+    const imageResponse = await fetch(resultUrl);
+    if (!imageResponse.ok) {
+      throw new Error('Failed to fetch result image');
+    }
+
+    const imageBlob = await imageResponse.arrayBuffer();
+    const base64Image = `data:image/jpeg;base64,${btoa(
+      new Uint8Array(imageBlob).reduce((data, byte) => data + String.fromCharCode(byte), '')
+    )}`;
+
     return new Response(
       JSON.stringify({ 
-        transformedImage: data.result_image || data.image,
+        transformedImage: base64Image,
         success: true 
       }), 
       {
